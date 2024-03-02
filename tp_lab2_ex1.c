@@ -176,6 +176,9 @@ int main (void){
         }
     } while (optiune != 6);
 
+    for (int i = 0; i < SIZE; i++)
+        free(matrice[i]);
+
     free(matrice);
     
     return 0;
