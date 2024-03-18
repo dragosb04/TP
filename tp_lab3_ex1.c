@@ -1,81 +1,147 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define MAX 100
+#define MAX 10
 
-typedef int Element_T;
+typedef enum StackCodes{ Q_OK, Q_EMPTY, Q_FULL} OpCode_t;
+
+typedef int Elemen_T;
 
 typedef struct {
-    Element_T *data;
-    int top;
-    int tail;
-    int nr;
-} Stack_T;
+	Elemen_T data[MAX];
+	int head, tail, nr;
+} Queue_T;
 
-Stack_T makeStack(Element_T element) {
-    Stack_T stack;
-    stack.nr = 1;
-    if ((stack.data = malloc(sizeof(Element_T))) == NULL) {
-        fprintf(stderr, "\nEroare la alocarea memoriei pentru stiva.\n\n");
-        exit(EXIT_FAILURE);
-    }
-    stack.data[0] = element;
-    stack.top = 0;
-    stack.tail = 0;
-    return stack;
+Queue_T make (Elemen_T element){
+	Queue_T queue;
+	queue.nr = 1;
+	queue.data[0] = element;
+	queue.tail = element;
+	queue.head = element;
+
+	return queue;
 }
 
-Stack_T push(Stack_T stack, Element_T element) {
-    if (stack.nr == MAX) {
-        fprintf(stderr, "\nStiva este depasita.\n\n");
-        exit(EXIT_FAILURE);
-    }
-    stack.nr++;
-    if ((stack.data = realloc(stack.data, sizeof(Element_T) * stack.nr)) == NULL) {
-        fprintf(stderr, "\nEroare la realocarea memoriei pentru stiva.\n\n");
-        exit(EXIT_FAILURE);
-    }
-    stack.data[stack.nr - 1] = element;
-    stack.top = stack.nr - 1;
-    stack.tail = 0;
-    return stack;
+OpCode_t push (Queue_T *queue, Elemen_T element){
+	if (queue->nr == MAX)
+		return Q_FULL;
+	
+	queue->nr++;
+	queue->data[queue->nr-1] = element;
+	queue->head = element;
+
+	return Q_OK; 
 }
 
-Element_T pop(Stack_T *stack) {
-    if (stack->nr == 0) {
-        fprintf(stderr, "\nNu exista niciun element pe stiva.\n\n");
-        exit(EXIT_FAILURE);
-    }
-    Element_T last = stack->data[stack->top];
-    stack->nr--;
-    if ((stack->data = realloc(stack->data, sizeof(Element_T) * stack->nr)) == NULL && stack->nr > 0) {
-        fprintf(stderr, "\nEroare la realocarea memoriei pentru stiva.\n\n");
-        exit(EXIT_FAILURE);
-    }
-    if (stack->nr == 0) {
-        stack->top = -1;
-        stack->tail = -1;
-    } else {
-        stack->top = stack->nr - 1;
-        stack->tail = 0;
-    }
-    return last;
+OpCode_t pop (Queue_T *queue){
+	if (queue->nr == 0)
+		return Q_EMPTY;
+	queue->nr--;
+	queue->head = queue->data[queue->nr - 1];
+	
+	return Q_OK;
 }
 
-int main(void) {
-    Stack_T stack;
-    stack = makeStack(10);
-    stack = push(stack, 20);
-    stack = push(stack, 30);
+OpCode_t enqueue(Queue_T *queue,  Elemen_T element){
+	if (queue->nr == MAX)
+		return Q_FULL;
 
-    printf("\n");
+	Queue_T copy;
+	copy.nr = 0;
+	while (queue->nr){
+		push(&copy, queue->data[queue->nr - 1]);
+		pop(queue);
+	}
 
-    printf("Elementul eliminat: %d\n", pop(&stack));
-    printf("Elementul eliminat: %d\n", pop(&stack));
-    printf("Elementul eliminat: %d\n", pop(&stack));
-    printf("Elementul eliminat: %d\n", pop(&stack));
+	copy.nr++;
+	copy.data[copy.nr - 1] = element;
 
-    // Eliberarea memoriei alocate pentru stivă
-    free(stack.data);
-    return 0;
+	while (copy.nr){
+		push (queue, copy.data[copy.nr - 1]);
+		pop(&copy);
+	}
+	
+	return Q_OK;
+}
+
+OpCode_t dequeue (Queue_T *queue){
+	if (queue->nr == 0)
+		return Q_EMPTY;
+	
+	Queue_T copy;
+
+	for (int i = 1; i <= queue->nr; i++)
+		copy.data[i-1] = queue->data[i];
+	
+	queue->nr--;
+
+	for (int i = 0; i < queue->nr; i++)
+		queue->data[i] = copy.data[i];
+
+	return Q_OK;
+}
+
+void afisare_Queue (Queue_T queue){
+	if (queue.nr != 0){
+		printf("\n");
+		for (int i = 0; i < queue.nr; i++){
+			printf("%d ", queue.data[i]);
+		}
+		printf("\n\n");
+	}
+	else {
+		printf("Nimic de afisat.\n");
+	}
+
+}
+
+int main (void){
+
+	Queue_T queue;
+	queue.nr = 0;
+	int n = 1;
+	Elemen_T add = 0;
+	OpCode_t err;
+	do {
+		printf("Alegeri\n1. Start \n2. Enqueue\n3. Dequeue\n0. Oprire\n\n");
+		printf("Alegere: ");
+		if (scanf("%d", &n) != 1)
+			printf("Eroare la citirea optiunii.\n");
+		switch (n)
+		{
+		case 1:
+			queue = make(10);
+			afisare_Queue(queue);
+			break;
+		case 2:
+			printf("\nElement de adaugat: ");
+			if (scanf("%d", &add) != 1){
+				printf("\n\nEroare la introducerea elementului.\n\n");
+			}
+			if ((err = enqueue(&queue, add)) == Q_FULL)
+				printf("Coada este plina.\n");
+			else{
+				printf("Element adaugat.\n");
+				afisare_Queue(queue);
+			}
+			break;
+		case 3:
+			if ((err = dequeue(&queue)) == Q_EMPTY)
+				printf("\nCoada este goala.\n\n");
+			else{
+				printf("Element scos.\n\n");
+				afisare_Queue(queue);
+			}
+			break;
+		case 0:
+			printf("\nOprit.\n");
+			break;
+		default:
+			printf("\nOptiune indisponibila.\n");
+			break;
+		}
+	} while (n != 0);
+
+
+	return 0;
 }
