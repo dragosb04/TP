@@ -69,14 +69,19 @@ OpCode_t dequeue (Queue_T *queue){
 		return Q_EMPTY;
 	
 	Queue_T copy;
+	copy.nr = 0;
 
-	for (int i = 1; i <= queue->nr; i++)
-		copy.data[i-1] = queue->data[i];
+	while (queue->nr){
+		push(&copy, queue->data[queue->nr - 1]);
+		pop(queue);
+	}
 	
-	queue->nr--;
+	copy.nr--;
 
-	for (int i = 0; i < queue->nr; i++)
-		queue->data[i] = copy.data[i];
+	while (copy.nr){
+		push (queue, copy.data[copy.nr - 1]);
+		pop(&copy);		
+	}
 
 	return Q_OK;
 }
