@@ -10,7 +10,7 @@ KVS_t adauga(KVS_t, El_t);
 KVS_t creeaza_KVS(KVS_t, El_t);
 El_t gen_element(unsigned, float);
 int cauta(KVS_t, unsigned);
-void eliberare(KVS_t);
+void eliberare(KVS_t*);
 void meniu();
 
 #endif // KVS_H
