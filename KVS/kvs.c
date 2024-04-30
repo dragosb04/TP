@@ -48,7 +48,7 @@ KVS_t adauga(KVS_t data, El_t item){
     if (data == NULL)
         return creeaza_KVS(data, item);
     
-    if ((data->array = realloc (data->array, data->current_size + sizeof(struct Element))) == NULL){
+    if ((data->array = realloc (data->array, (data->current_size + 1) * sizeof(struct Element))) == NULL){
         fprintf(stderr, "Eroare la alocarea memoriei pentru Element.\n");
         exit(EXIT_FAILURE);
     }
@@ -60,10 +60,12 @@ KVS_t adauga(KVS_t data, El_t item){
 }
 
 int cauta(KVS_t data, unsigned k){
-    for (unsigned i = 0; i < data->current_size; i++){
-        if (k == data->array[i]->cheie){
-            printf("%10u gasit pe pozitia %u.\n\n", k, i);
-            return i;
+    if (data != NULL){
+        for (unsigned i = 0; i < data->current_size; i++){
+            if (k == data->array[i]->cheie){
+                printf("%10u gasit pe pozitia %u.\n\n", k, i);
+                return i;
+            }
         }
     }
     printf("%10u inexistent.\nreturnat -1\n\n", k);
@@ -73,23 +75,23 @@ int cauta(KVS_t data, unsigned k){
 void printKVS(KVS_t data) {
     printf("\n");
     for (unsigned i = 0; i < data->current_size; i++){
-        printf("%u. %10u --- %.3f\n", i, data->array[i]->cheie, data->array[i]->valoare);
+        printf("%u. %10u --- %f\n", i, data->array[i]->cheie, data->array[i]->valoare);
     }
     printf("\n");
 }
 
-void eliberare(KVS_t data){
-    if (data != NULL){
-        for (unsigned i = 0; i < data->current_size; i++){
-            printf("%u. Se elibereaza %u\n", i, data->array[i]->cheie);
-            free(data->array[i]);
+void eliberare(KVS_t *data){
+    if (*data != NULL){
+        for (unsigned i = 0; i < (*data)->current_size; i++){
+            printf("%u. Se elibereaza %u\n", i, (*data)->array[i]->cheie);
+            free((*data)->array[i]);
         }
         
-        free(data->array);
+        free((*data)->array);
         printf("Array eliberat.\n");
-        free(data);
+        free(*data);
         printf("Pointer eliberat.\n");
-        data = NULL;
+        *data = NULL;
     }
     else printf("Nefolosit.\n");
     
