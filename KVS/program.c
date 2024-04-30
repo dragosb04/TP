@@ -1,21 +1,16 @@
 #include "kvs.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
-int main()
-{
+int main(){
     KVS_t kvs = NULL;
-    kvs = adauga(kvs, gen_element(10, 20));
-    kvs = adauga(kvs, gen_element(30, 40));
-    kvs = adauga(kvs, gen_element(1234567890, 11.1));
-
-    printKVS(kvs);
-    cauta(kvs, 20);
-    cauta(kvs, 1234567890);
-    eliberare(kvs);
 
     int optiune = 0;
-    int cheie = 0, valoare = 0;
+    int cheie = 0;
+    float valoare = 0;
+    srand(time(NULL));
+
     do {
         meniu();
         if (scanf("%d", &optiune) != 1)
@@ -23,20 +18,8 @@ int main()
         
         switch(optiune){
             case 1:
-                printf("\nCheie: ");
-
-                if (scanf("%u", &cheie) != 1){
-                    fprintf(stderr, "Eroare la citire.\n");
-                    exit(EXIT_FAILURE);
-                }
-
-                printf("Valoare: ");
-
-                if (scanf("%u", &valoare) != 1){
-                    fprintf(stderr, "Eroare la citire.\n");
-                    exit(EXIT_FAILURE);
-                }
-
+                cheie = rand() % 1000000000;
+                valoare = cheie / 8.1;
                 kvs = adauga(kvs, gen_element(cheie, valoare));
                 printKVS(kvs);
             break;
@@ -50,7 +33,7 @@ int main()
             break;
             case 3:
                 printf("Se opreste...\n");
-                eliberare(kvs);
+                eliberare(&kvs);
             break;
             default:
                 printf("Optiune necunoscuta.\n");
