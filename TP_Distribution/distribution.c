@@ -4,7 +4,6 @@
 #include <time.h>
 #define _USE_MATH_DEFINES
 #include <math.h>
-#include <time.h>
 
 float generate_normal_distribution(float medie, float deviatie) {
     
