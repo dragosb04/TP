@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include "distribution.h"
 #include <stdlib.h>
 #include <time.h>
