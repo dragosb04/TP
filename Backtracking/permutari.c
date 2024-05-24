@@ -18,12 +18,12 @@ void print_perm (int stack[], int n){
 void perm_back (int stack[], int k, int n){
     if (k == n)
         print_perm(stack, n);
-    
-    for (int i = k; i <= n; i++){
-        swap(&stack[i], &stack[k]);
-        perm_back(stack, k + 1, n);
-        swap(&stack[i], &stack[k]);
-    }
+    else
+        for (int i = k; i <= n; i++){
+            swap(&stack[i], &stack[k]);
+            perm_back(stack, k + 1, n);
+            swap(&stack[i], &stack[k]);
+        }
 }
 
 int main (void){
