@@ -4,7 +4,7 @@
 typedef struct {
     int a, b;
 } inter;
- 
+
 int cmpf(const void *a, const void *b){
     return *(int *) a - *(int *) b;
 }
