@@ -37,6 +37,9 @@ int main (int argc, char** argv){
     if (fscanf(f, "%d", &n) != 1)
         return -1;
     
+    if (n > 100000)
+        return -1;
+
     int v[n];
 
     for (int i = 0; i < n; i ++)
