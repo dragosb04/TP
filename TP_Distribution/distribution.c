@@ -9,9 +9,10 @@ float generate_normal_distribution(float medie, float deviatie) {
     
     float u1, u2;
     float z;
-
-    u1 = rand() / (RAND_MAX + 1.0);
-    u2 = rand() / (RAND_MAX + 1.0);
+    do {
+        u1 = rand() / (RAND_MAX + 1.0);
+        u2 = rand() / (RAND_MAX + 1.0);
+    } while (u1 == 0.0 && u2 == 0.0);
 
     z = sqrt(-2.0 * log(u1)) * cos(2.0 * M_PI * u2);
 
