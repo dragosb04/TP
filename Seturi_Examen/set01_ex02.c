@@ -31,13 +31,14 @@ void diff_par_to_s (int v[], int poz, int n, int s){
     
     if (poz == n + 1)
         return;
-
+    
+    if (is_valid(v, n, s))
+        print_arr(v, n);
+    
     for (int i = 0; i < 9; i++){
         v[poz] = i;
         diff_par_to_s(v, poz + 1, n, s);
     }
-    if (is_valid(v, n, s))
-        print_arr(v, n);
 
 }
 
